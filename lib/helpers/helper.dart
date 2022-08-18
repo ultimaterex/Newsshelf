@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 import 'dart:math';
 
@@ -11,7 +10,7 @@ class Helper {
     const acceptable =
         'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
     return String.fromCharCodes(Iterable.generate(length,
-            (v) => acceptable.codeUnitAt(random.nextInt(acceptable.length))));
+        (v) => acceptable.codeUnitAt(random.nextInt(acceptable.length))));
   }
 
   static Response error({String? message}) {

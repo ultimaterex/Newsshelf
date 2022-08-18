@@ -1,13 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:news_shelf/config/middlewares.dart';
 import 'package:news_shelf/helpers/helper.dart';
+import 'package:news_shelf/repositories/credentials_repository.dart';
 import 'package:news_shelf/routes/v1/v1_routes.dart';
+import 'package:riverpod/riverpod.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
-import 'package:riverpod/riverpod.dart';
-
 
 // state of our providers will be stored here
 final container = ProviderContainer();
@@ -16,9 +17,7 @@ final container = ProviderContainer();
 Router _router = Router()
   ..get('/', _home)
   ..get('/echo/<message>', _echoHandler)
-  ..mount('/v1', V1Routes(container).router)
-;
-
+  ..mount('/v1', V1Routes(container).router);
 
 Response _home(Request request) {
   final _aboutApp = {
@@ -29,19 +28,23 @@ Response _home(Request request) {
 }
 
 Response _echoHandler(Request request) {
-  final message = params(request, 'message');
+  final message = request.params['message'];
   return Response.ok('$message\n');
 }
 
-
 void main(List<String> args) async {
   try {
+    // check if environmentVariables are set by loading credentials file
+    container.read(credentialsProvider);
+
     // Use any available host or container IP (usually `0.0.0.0`).
     final ip = InternetAddress.anyIPv4;
 
     // Configure a pipeline that logs requests.
-    final _handler = Pipeline().addMiddleware(logRequests()).addHandler(
-        _router);
+    final _handler = Pipeline()
+        .addMiddleware(logRequests())
+        .addMiddleware(handleCors())
+        .addHandler(_router);
 
     // final handler = SwaggerUI('specs/swagger.yaml', title: 'News Shelf API');
 

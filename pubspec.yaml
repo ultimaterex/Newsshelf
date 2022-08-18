@@ -10,21 +10,26 @@ environment:
 dependencies:
   args: ^2.0.0
 
+  # environment
+  dotenv: ^4.0.1
 
-#  server
+  #  server
   shelf: ^1.1.0
   shelf_router: ^1.0.0
   shelf_swagger_ui: ^1.0.0+2
 
-#  state management
+  #  state management
   riverpod: ^1.0.3
 
-# code gen
+  # functional
+  fpdart: ^0.2.0
+
+  # code gen
   json_serializable: ^6.3.1
   equatable: ^2.0.3
   retrofit: any
   logger: any
-  json_annotation: any
+  json_annotation: ^4.6.0
 
 dev_dependencies:
   http: ^0.13.0
@@ -37,3 +42,7 @@ dev_dependencies:
   build_runner: any
   json_serializable: any
   json_annotation: ^4.6.0
+
+
+assets:
+  - .env
