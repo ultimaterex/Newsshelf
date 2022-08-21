@@ -26,25 +26,14 @@ class V1Routes {
       return Response.ok(jsonEncode(_aboutApp));
     });
 
-    router.get('/random', getArticleByKeyword);
-    router.get('/search', getArticleByKeyword);
+    router.get('/search', getArticlesByKeyword);
+    router.get('/search-complex', getArticleByComplexSearch);
     router.get('/trending', getTopHeadlines);
     router.all(
         '/<ignore|.*>',
         (Request r) =>
             Response.notFound(jsonEncode({'message': 'Route not defined'})));
     return router;
-  }
-
-  // Future<Response> getRandomArticle(Request request) async {
-  //   final resultTask = await api.getTopHeadlines().run();
-  //   return resultTask.match(
-  //           (l) => Response.internalServerError(body: jsonEncode(l)),
-  //           (r) => Response.ok(jsonEncode(r.toJson())));
-  // }
-
-  Future<Response> getNArticles(Request request) async {
-    return Response.ok(jsonEncode('Win'));
   }
 
   Future<Response> getTopHeadlines(Request request) async {
@@ -57,18 +46,40 @@ class V1Routes {
         url: url, topic: topic, language: language, country: country);
   }
 
-  Future<Response> getArticleByKeyword(Request request) async {
+  Future<Response> getArticlesByKeyword(Request request) async {
     final url = request.url;
+    final language = url.queryParameters['language'];
+    final country = url.queryParameters['country'];
 
     return url.queryParameters.containsKey('query').match(
         () => Response.badRequest(body: "Parameter 'query' was not supplied"),
         () {
       final query = url.queryParameters['query']!;
-      return news.searchNews(url: url, query: query);
-        });
+      return news.searchNews(
+          url: url, query: query, language: language, country: country);
+    });
   }
 
-  Future<Response> getArticleByAuthor(Request request) async {
-    return Response.ok(jsonEncode('Win'));
+  Future<Response> getArticleByComplexSearch(Request request) async {
+    final url = request.url;
+    final language = url.queryParameters['language'];
+    final country = url.queryParameters['country'];
+    final to = url.queryParameters['to'];
+    final from = url.queryParameters['from'];
+    final searchIn = url.queryParameters['searchIn'];
+
+    return url.queryParameters.containsKey('query').match(
+        () => Response.badRequest(body: "Parameter 'query' was not supplied"),
+        () {
+      final query = url.queryParameters['query']!;
+      return news.searchNewsComplex(
+          url: url,
+          query: query,
+          language: language,
+          country: country,
+          to: to,
+          from: from,
+          searchIn: searchIn);
+    });
   }
 }

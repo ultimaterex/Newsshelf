@@ -9,6 +9,7 @@ import 'package:riverpod/riverpod.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf/shelf_io.dart';
 import 'package:shelf_router/shelf_router.dart';
+import 'package:shelf_swagger_ui/shelf_swagger_ui.dart';
 
 // state of our providers will be stored here
 final container = ProviderContainer();
@@ -22,7 +23,7 @@ Router _router = Router()
 Response _home(Request request) {
   final _aboutApp = {
     'name': 'News Shelf',
-    'description': 'A extensible multi-source news fetch api'
+    'description': 'A extensible multi-source news fetch api',
   };
   return Response.ok(jsonEncode(_aboutApp));
 }
@@ -41,12 +42,21 @@ void main(List<String> args) async {
     final ip = InternetAddress.anyIPv4;
 
     // Configure a pipeline that logs requests.
-    final _handler = Pipeline()
+    final _routeHandler = Pipeline()
         .addMiddleware(logRequests())
         .addMiddleware(handleCors())
-        .addHandler(_router);
+        .addHandler(
+          _router,
+        );
 
-    // final handler = SwaggerUI('specs/swagger.yaml', title: 'News Shelf API');
+    final _documentHandler =
+        SwaggerUI('specs/swagger.yaml', title: 'News Shelf API Documentation', syntaxHighlightTheme: SyntaxHighlightTheme.monokai);
+
+
+    final _handler = Cascade()
+        .add(_routeHandler)
+        .add(_documentHandler)
+        .handler;
 
     // For running in containers, we respect the PORT environment variable.
     final port = int.parse(Platform.environment['PORT'] ?? '8080');
@@ -54,7 +64,6 @@ void main(List<String> args) async {
 
     print('Server listening on port $port');
   } on Exception {
-    // 4
     Helper.error();
   }
 }

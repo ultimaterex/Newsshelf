@@ -6,20 +6,21 @@ abstract class ApiRepository {
   ApiRepository();
 
   /// use [TaskEither] to perform an async request in a composable way.
-  TaskEither<String, NewsResult> searchDefault(String query);
+  TaskEither<String, NewsResult> searchDefault(String query, {String? language, String? country});
 
-  TaskEither<String, NewsResult> searchAll(String query,
-      {String? language, String? country});
+  TaskEither<String, NewsResult> searchComplex(String query,
+      {String? searchIn, String? language, String? country, String? from, String? to});
 
   TaskEither<String, NewsResult> searchByTitle(String query,
-      {String? language, String? country});
-
-  TaskEither<String, NewsResult> searchByAuthor(String query,
       {String? language, String? country});
 
   TaskEither<String, NewsResult> searchByDescription(String query,
       {String? language, String? country});
 
+  TaskEither<String, NewsResult> searchByAuthor(String query,
+      {String? language, String? country});
+
   TaskEither<String, NewsResult> getTopHeadlines(
       {String? topic, String? language, String? country});
+
 }

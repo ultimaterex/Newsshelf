@@ -1,18 +1,15 @@
+import 'package:dio/dio.dart' show Dio;
 import 'package:fpdart/fpdart.dart';
+import 'package:news_shelf/helpers/api.dart';
 import 'package:news_shelf/models/news_result.dart';
 import 'package:news_shelf/models/rest_client.dart';
 import 'package:news_shelf/repositories/api_repository.dart';
-import 'package:dio/dio.dart' show Dio;
 import 'package:news_shelf/repositories/credentials_repository.dart';
-
 import 'package:riverpod/riverpod.dart';
-
-import '../helpers/api.dart';
-
 
 final gnewsRepositoryProvider = Provider((ref) {
   return GnewsApiRepository(ref.read(credentialsProvider).gnewsApiKey,
-    RestClient(Dio(), baseUrl: Api.base));
+      RestClient(Dio(), baseUrl: GNewsApi.base));
 });
 
 class GnewsApiRepository implements ApiRepository {
@@ -26,19 +23,8 @@ class GnewsApiRepository implements ApiRepository {
           {String? language, String? country}) =>
       TaskEither.tryCatch(
         () async {
-          final response = await api.getArticlesBySearch(token, query: query);
-          return response.toNewsResult();
-        },
-        (error, __) => 'Unknown error: $error',
-      );
-
-  @override
-  TaskEither<String, NewsResult> searchAll(String query,
-          {String? language, String? country}) =>
-      TaskEither.tryCatch(
-        () async {
           final response = await api.getArticlesBySearch(token,
-              query: query, searchIn: "title,description,content");
+              query: query, country: country, language: language);
           return response.toNewsResult();
         },
         (error, __) => 'Unknown error: $error',
@@ -89,6 +75,27 @@ class GnewsApiRepository implements ApiRepository {
         () async {
           final response = await api.getTopHeadlines(token,
               topic: topic, language: language, country: country);
+          return response.toNewsResult();
+        },
+        (error, __) => 'Unknown error: $error',
+      );
+
+  @override
+  TaskEither<String, NewsResult> searchComplex(String query,
+          {String? searchIn,
+          String? language,
+          String? country,
+          String? from,
+          String? to}) =>
+      TaskEither.tryCatch(
+        () async {
+          final response = await api.getArticlesBySearch(token,
+              query: query,
+              searchIn: searchIn,
+              language: language,
+              country: country,
+              from: from,
+              to: to);
           return response.toNewsResult();
         },
         (error, __) => 'Unknown error: $error',

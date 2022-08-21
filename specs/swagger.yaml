@@ -1,11 +1,395 @@
 openapi: 3.0.0
-info:
-  description: "API system"
-  version: "1.0.10"
-  title: "Swagger Test"
 servers:
-  - url: http://newsshelf.serubii.com
-    description: News API
-tags:
-  - name: "test"
-    description: "News Access"
+  - description: News Shelf API
+    url: https://newsshelf.serubii.com/v1/
+info:
+  version: "1.0.0"
+  title: News Shelf
+  description: The Dart based NewsAPI
+paths:
+  /search:
+    get:
+      tags:
+        - News
+      description: Allows you to search articles.
+      parameters:
+        - in: query
+          name: query
+          required: true
+          description: This is the purpose of your search. Articles returned are filtered by the given keywords.
+          schema:
+            type: string
+        - in: query
+          name: language
+          required: false
+          description: |
+            Set the language of returned articles
+          schema:
+            type: string
+
+        - in: query
+          name: country
+          required: false
+          description: |
+            Set the country of returned articles
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching articles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResult'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Parameter 'query' was not supplied
+  /search-complex:
+    get:
+      tags:
+        - News
+      description: Allows you to search articles with more flexibility.
+      parameters:
+        - in: query
+          name: query
+          required: true
+          description: This is the purpose of your search. Articles returned are filtered by the given keywords.
+          schema:
+            type: string
+        - in: query
+          name: language
+          required: false
+          description: |
+            Set the language of returned articles
+          schema:
+            type: string
+        - in: query
+          name: country
+          required: false
+          description: |
+            Set the country of returned articles
+          schema:
+            type: string
+        - in: query
+          name: searchin
+          required: false
+          description: |
+            Set the attributes of the articles in which your query will be searched. 
+
+            The attributes are **title**, **description** and **content**. 
+
+            You can specify several attributes by separating them with commas (e.g. title,description)
+          schema:
+            type: string
+        - in: query
+          name: from
+          required: false
+          description: |
+            Keep articles with a publication date greater than or equal to the given date.
+
+            ISO 8601 format (e.g. 2022-08-21T19:17:51Z)
+          schema:
+            type: string
+        - in: query
+          name: to
+          required: false
+          description: |
+            Keep articles with a publication date less than or equal to the given date.
+
+            ISO 8601 format (e.g. 2022-08-21T19:17:51Z)
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching articles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResult'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Parameter 'query' was not supplied
+  /trending:
+    get:
+      tags:
+        - News
+      description: Allows you to see all trending headlines
+      parameters:
+        - in: query
+          name: topic
+          required: false
+          description: |
+            Set the articles topic.
+
+            Defaults to **breaking-news**
+
+            Topics available are: **breaking-news**, **world**, **nation**, **business**, **technology**, **entertainment**, **sports**, **science** and **health**.
+          schema:
+            type: string
+            default: 'breaking-news'
+        - in: query
+          name: language
+          required: false
+          description: |
+            Set the language of returned articles
+          schema:
+            type: string
+
+        - in: query
+          name: country
+          required: false
+          description: |
+            Set the country of returned articles
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Matching articles
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NewsResult'
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+                example: Parameter 'query' was not supplied
+components:
+  schemas:
+    NewsResult:
+      type: object
+      properties:
+        source:
+          type: string
+          example: fresh
+        count:
+          type: integer
+          format: int32
+          example: 15239
+        articles:
+          type: array
+          items:
+            type: object
+            properties:
+              title:
+                type: string
+                example: Intel 14th-gen processors may have ray tracing capabilities
+              description:
+                type: string
+                example: Coelacanth's Dream posted the initial finding late last week highlighting an earlier commit that added Meteor Lake to the virtual instruction set architecture (vISA) as well as...
+              content:
+                type: string
+                example: While the 13th-gen Raptor Lake CPU release may be right around the corner Intel fans are already looking ahead at what the 14th generation will bring to the table. A South Korean tech enthusiast has uncovered information that may she... [2229 chars]
+              image:
+                type: string
+                example: https://static.techspot.com/images2/news/bigimage/2022/08/2022-08-21-image-4.jpg
+              metadata:
+                type: object
+                properties:
+                  image:
+                    type: string
+                    example: https://static.techspot.com/images2/news/bigimage/2022/08/2022-08-21-image-4.jpg
+                  publishedAt:
+                    type: string
+                    example: 2022-08-21T13:38:16.000Z
+                  articleLength:
+                    type: integer
+                    format: int32
+                    example: 266
+                  url:
+                    type: string
+                    format: uri
+                    example: 'https://www.techspot.com/news/95704-intel-14th-gen-processors-may-have-ray-tracing.html'
+                  source:
+                    type: object
+                    properties:
+                      name:
+                        type: string
+                        example: TechSpot
+                      url:
+                        type: string
+                        format: uri
+                        example: 'https://www.techspot.com'
+                      wordFrequency:
+                        type: object
+                        properties:
+                          Coelacanth's:
+                            type: integer
+                            format: int32
+                            example: 1
+                          Dream:
+                            type: integer
+                            format: int32
+                            example: 1
+                          posted:
+                            type: integer
+                            format: int32
+                            example: 1
+                          the:
+                            type: integer
+                            format: int32
+                            example: 2
+                          initial:
+                            type: integer
+                            format: int32
+                            example: 1
+                          finding:
+                            type: integer
+                            format: int32
+                            example: 1
+                          late:
+                            type: integer
+                            format: int32
+                            example: 1
+                          last:
+                            type: integer
+                            format: int32
+                            example: 1
+                          week:
+                            type: integer
+                            format: int32
+                            example: 1
+                          highlighting:
+                            type: integer
+                            format: int32
+                            example: 1
+                          an:
+                            type: integer
+                            format: int32
+                            example: 1
+                          earlier:
+                            type: integer
+                            format: int32
+                            example: 1
+                          commit:
+                            type: integer
+                            format: int32
+                            example: 1
+                          that:
+                            type: integer
+                            format: int32
+                            example: 1
+                          added:
+                            type: integer
+                            format: int32
+                            example: 1
+                          Meteor:
+                            type: integer
+                            format: int32
+                            example: 1
+                          Lake:
+                            type: integer
+                            format: int32
+                            example: 1
+                          to:
+                            type: integer
+                            format: int32
+                            example: 1
+                          virtual:
+                            type: integer
+                            format: int32
+                            example: 1
+                          instruction:
+                            type: integer
+                            format: int32
+                            example: 1
+                          set:
+                            type: integer
+                            format: int32
+                            example: 1
+                          architecture:
+                            type: integer
+                            format: int32
+                            example: 1
+                          (vISA):
+                            type: integer
+                            format: int32
+                            example: 1
+                          as:
+                            type: integer
+                            format: int32
+                            example: 1
+                          well:
+                            type: integer
+                            format: int32
+                            example: 1
+                          as...:
+                            type: integer
+                            format: int32
+                            example: 1
+    Language:
+      type: string
+      description: |
+        Languages available are:  
+        | Country                 | Param       |
+        | ----------------        | ------------|
+        | Arabic                  | ar          |
+        | German                  | de          |
+        | Greek                   | el          |
+        | English                 | en          |
+        | Spanish                 | es          |
+        | French                  | fr          |
+        | Hebrew                  | he          |
+        | Hindi                   | hi          |
+        | Italian                 | it          |
+        | Japanese                | ja          |
+        | Malayalam               | ml          |
+        | Marathi                 | mr          |
+        | Dutch                   | nl          |
+        | Norwegian               | no          |
+        | Portuguese              | pt          |
+        | Romanian                | ro          |
+        | Russian                 | ru          |
+        | Swedish                 | sv          |
+        | Tamil                   | ta          |
+        | Telugu                  | te          |
+        | Ukrainian               | uk          |
+        | Chinese                 | zh          |
+      example: en
+    Country:
+      type: string
+      description: |
+        Countries Available are:
+        | Country                 | Param       |
+        | ----------------        | ------------|
+        | Australia               | au          |
+        | Brazil                  | br          |
+        | Canada                  | ca          |
+        | Switzerland             | ch          |
+        | China                   | cn          |
+        | Germany                 | de          |
+        | Egypt                   | eg          |
+        | Spain                   | es          |
+        | France                  | fr          |
+        | United Kingdom          | gb          |
+        | Greece                  | gr          |
+        | Hong Kong               | hk          |
+        | Ireland                 | ie          |
+        | Israel                  | il          |
+        | India                   | in          |
+        | Italy                   | it          |
+        | Japan                   | jp          |
+        | Netherlands             | nl          |
+        | Norway                  | no          |
+        | Peru                    | pe          |
+        | Philippines             | ph          |
+        | Pakistan                | pk          |
+        | Portugal                | pt          |
+        | Romania                 | ro          |
+        | Russian Federation      | ru          |
+        | Sweden                  | se          |
+        | Singapore               | sg          |
+        | Taiwan                  | tw          |
+        | Ukraine                 | ua          |
+        | United States           | us          |
+      example: us

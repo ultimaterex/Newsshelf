@@ -23,10 +23,34 @@ class NewsController {
 
   NewsController(this.ref);
 
+  /// Retrieves the searched articles by querying cached data or querying the external API
   Future<Response> searchNews(
-          {required Uri url, required String query}) async =>
+          {required Uri url,
+          required String query,
+          String? language,
+          String? country}) async =>
       await _cacheResponseHandler(
-          url, () => newsRepository.searchDefault(query));
+          url,
+          () => newsRepository.searchDefault(query,
+              country: country, language: language));
+
+  /// Retrieves the searched articles by querying cached data or querying the external API, Allows for more Parameters
+  Future<Response> searchNewsComplex(
+          {required Uri url,
+          required String query,
+          String? language,
+          String? country,
+          String? searchIn,
+          String? from,
+          String? to}) async =>
+      await _cacheResponseHandler(
+          url,
+          () => newsRepository.searchComplex(query,
+              country: country,
+              language: language,
+              searchIn: searchIn,
+              from: from,
+              to: to));
 
   /// Retrieves the top headlines by querying cached data or querying the external API
   Future<Response> getTopHeadlines(
