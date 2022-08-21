@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:news_shelf/models/gnews/source.dart';
 
-part 'metadata.g.dart';
+part 'article_metadata.g.dart';
 
 @JsonSerializable()
-class Metadata {
+class ArticleMetadata {
   String? image;
   DateTime publishedAt;
   int articleLength;
@@ -12,7 +12,7 @@ class Metadata {
   Source source;
   Map<String, int> wordFrequency;
 
-  Metadata(
+  ArticleMetadata(
       {this.image,
       required this.publishedAt,
       required this.articleLength,
@@ -20,11 +20,11 @@ class Metadata {
       required this.url,
       required this.wordFrequency});
 
-  /// Connect the generated [_$GnewsResultFromJson] function to the `fromJson`
+  /// Connect the generated [_$ArticleMetadataFromJson] function to the `fromJson`
   /// factory.
-  factory Metadata.fromJson(Map<String, dynamic> json) =>
-      _$MetadataFromJson(json);
+  factory ArticleMetadata.fromJson(Map<String, dynamic> json) =>
+      _$ArticleMetadataFromJson(json);
 
-  /// Connect the generated [_$ArticleToJson] function to the `toJson` method.
-  Map<String, dynamic> toJson() => _$MetadataToJson(this);
+  /// Connect the generated [_$ArticleMetadataToJson] function to the `toJson` method.
+  Map<String, dynamic> toJson() => _$ArticleMetadataToJson(this);
 }

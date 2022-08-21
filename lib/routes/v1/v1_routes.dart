@@ -10,6 +10,8 @@ import 'package:shelf_router/shelf_router.dart';
 class V1Routes {
   final ProviderContainer provider;
 
+  NewsController get news => provider.read(newsProvider);
+
   V1Routes(this.provider);
 
   Router get router {
@@ -46,19 +48,24 @@ class V1Routes {
   }
 
   Future<Response> getTopHeadlines(Request request) async {
-    final topic = request.url.queryParameters['topic'];
-    final language = request.url.queryParameters['language'];
-    final country = request.url.queryParameters['country'];
-    return provider.read(newsProvider).getTopHeadlines(topic: topic, language: language, country: country);
+    final url = request.url;
+    final topic = url.queryParameters['topic'];
+    final language = url.queryParameters['language'];
+    final country = url.queryParameters['country'];
+
+    return news.getTopHeadlines(
+        url: url, topic: topic, language: language, country: country);
   }
 
   Future<Response> getArticleByKeyword(Request request) async {
-    return request.url.queryParameters.containsKey('query').fold(
+    final url = request.url;
+
+    return url.queryParameters.containsKey('query').match(
         () => Response.badRequest(body: "Parameter 'query' was not supplied"),
         () {
-      final query = request.url.queryParameters['query']!;
-      return provider.read(newsProvider).searchNews(query: query);
-    });
+      final query = url.queryParameters['query']!;
+      return news.searchNews(url: url, query: query);
+        });
   }
 
   Future<Response> getArticleByAuthor(Request request) async {

@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 
-import 'metadata.dart';
+import 'article_metadata.dart';
 part 'article.g.dart';
 
 @JsonSerializable()
@@ -9,7 +9,7 @@ class Article {
   String description;
   String content;
   String image;
-  Metadata metadata;
+  ArticleMetadata metadata;
 
   Article(
       this.title, this.description, this.content, this.image, this.metadata);

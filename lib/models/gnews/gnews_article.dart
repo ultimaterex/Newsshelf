@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 import 'package:news_shelf/helpers/extensions.dart';
 import 'package:news_shelf/models/article.dart';
 import 'package:news_shelf/models/gnews/source.dart';
-import 'package:news_shelf/models/metadata.dart';
+import 'package:news_shelf/models/article_metadata.dart';
 part 'gnews_article.g.dart';
 
 @JsonSerializable()
@@ -32,7 +32,7 @@ class GnewsArticle {
         description,
         content,
         image,
-        Metadata(
+        ArticleMetadata(
             url: url,
             source: source,
             articleLength: content.length,
