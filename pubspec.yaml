@@ -43,6 +43,7 @@ dev_dependencies:
   #code gen
   retrofit_generator: any
   build_runner: any
+  build_web_compilers: any
   json_serializable: any
   json_annotation: ^4.6.0
 
