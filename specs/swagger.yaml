@@ -1,7 +1,9 @@
 openapi: 3.0.0
 servers:
+  - description: News Shelf API - Heroku
+    url: https://newsshelf.herokuapp.com/
   - description: News Shelf API
-    url: https://newsshelf.serubii.com/v1/
+    url: http://newsshelf.serubii.com/v1/
 info:
   version: "1.0.0"
   title: News Shelf
