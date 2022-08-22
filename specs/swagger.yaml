@@ -171,9 +171,12 @@ components:
     NewsResult:
       type: object
       properties:
-        source:
-          type: string
-          example: fresh
+        metadata:
+          type: object
+          properties:
+            source:
+              type: string
+              example: fresh
         count:
           type: integer
           format: int32
